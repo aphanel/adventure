@@ -19,7 +19,7 @@
 
        WORKING-STORAGE SECTION.
         01 WSProtagonist.
-           02 WSBlase PIC X(18) VALUE 'Unknown           '.
+           02 WSBlase PIC X(18) VALUE 'Unknown'.
            02 WSStrength PIC 99 VALUE 01.
            02 WSVitality PIC 99 VALUE 01.
            02 WSDexterity PIC 99 VALUE 01.
@@ -28,10 +28,13 @@
         01 Place PIC X(16).
         01 GameLoop PIC X VALUE "Y".
         01 CanGo PIC X VALUE "N".
+        01 Seed PIC 9(6).
+        01 RandVal PIC 9(2) VALUE ZERO.
        
        PROCEDURE DIVISION.
        Incipit.
            PERFORM ResetCharacter.
+           ACCEPT Seed FROM TIME.
            DISPLAY "You wake up in a haze, feeling cold and achy.".
            DISPLAY "As you look around, you realize that you are in the middle of a forest but you don't remember how you got there.".
            DISPLAY "What do you do? (type help to get a list of commands)".
@@ -93,14 +96,17 @@
        Bushes.
            DISPLAY "As you approach, the source of the light becomes apparent: a bonfire.".
            DISPLAY "The warmth of the fire calms you a little. For a moment, you get lost in a thought".
-           DISPLAY "as you remember a childhood memory you hadn't in a long time..".
+           DISPLAY "as you remember a childhood memory you hadn't had in a long time..".
            DISPLAY " ".
+           PERFORM ChildhoodMemory.
+       
+       ChildhoodMemory.
            DISPLAY "You are..".
            DISPLAY "   1- in an alley".
            DISPLAY "   2- by a lake".
            ACCEPT Choice.
            IF Choice="1"
-               DISPLAY "You are in an alley."
+               DISPLAY "You are in an alley"
                OPEN OUTPUT GameStateFile                       
                    MOVE 15 TO Dexterity
                    WRITE Protagonist
@@ -125,3 +131,6 @@
                WRITE Protagonist
                END-WRITE
            CLOSE GameStateFile.
+
+       RollDice.
+           COMPUTE RandVal = FUNCTION RANDOM (Seed) * 20 + 1.
